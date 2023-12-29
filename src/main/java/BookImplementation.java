@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class BookImplementation implements BookDAO{
 
     @Override
     public void deleteBook(int bookId) {
+
         try (PreparedStatement statement=connection.prepareStatement("DELETE FROM Book WHERE bookId=?")) {
             statement.setInt(1,bookId);
             statement.executeUpdate();
@@ -54,8 +56,27 @@ public class BookImplementation implements BookDAO{
 
     @Override
     public Book getBookById(int bookId) {
-        return null;
+        Book book=null;
+        try (PreparedStatement statement= connection.prepareStatement("SELECT * FROM Book WHERE bookId=?")){
+            statement.setInt(1,bookId);
+
+            try (ResultSet rs =statement.executeQuery()){
+                while (rs.next()){
+                    int id =rs.getInt("bookId");
+                    String title=rs.getString("title");
+                    String author = rs.getString("author");
+                    double price=rs.getDouble("price");
+                    book=new Book(id,title,author,price);
+                }
+
+            }
+            } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return book;
+
     }
+
 
     @Override
     public List<Book> getAllBooks() {
