@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookImplementation implements BookDAO{
@@ -27,7 +28,7 @@ public class BookImplementation implements BookDAO{
 
     @Override
     public void updateBook(Book book) {
-        try (PreparedStatement statement=connection.prepareStatement("UPDATE Book SET title=?, author=?, price=? WHERE bookId=? ")){
+        try (PreparedStatement statement=connection.prepareStatement("UPDATE Book SET title=?, author=?, price=? WHERE booId=? ")){
             statement.setString(1,book.getTitle());
             statement.setString(2,book.getAuthor());
             statement.setDouble(3,book.getPrice());
@@ -42,9 +43,9 @@ public class BookImplementation implements BookDAO{
     }
 
     @Override
-    public void deleteBook(int bookId) {
+    public Book deleteBook(int bookId) {
 
-        try (PreparedStatement statement=connection.prepareStatement("DELETE FROM Book WHERE bookId=?")) {
+        try (PreparedStatement statement=connection.prepareStatement("DELETE FROM Book WHERE booId=?")) {
             statement.setInt(1,bookId);
             statement.executeUpdate();
 
@@ -52,6 +53,7 @@ public class BookImplementation implements BookDAO{
             System.out.println(e.getMessage());
         }
 
+        return null;
     }
 
     @Override
@@ -66,7 +68,7 @@ public class BookImplementation implements BookDAO{
                     String title=rs.getString("title");
                     String author = rs.getString("author");
                     double price=rs.getDouble("price");
-                    book=new Book(id,title,author,price);
+                    book=new Book(title,author,price);
                 }
 
             }
@@ -80,6 +82,24 @@ public class BookImplementation implements BookDAO{
 
     @Override
     public List<Book> getAllBooks() {
-        return null;
+        List<Book> books= new ArrayList<>();
+        try(PreparedStatement statement=connection.prepareStatement("SELECT *FROM Book")) {
+            try (ResultSet rs =statement.executeQuery()){
+                while (rs.next()){
+                    int id =rs.getInt("bookId");
+                    String title=rs.getString("title");
+                    String author = rs.getString("author");
+                    double price=rs.getDouble("price");
+                    Book book=new Book(title,author,price);
+                    books.add(book);
+
+            }
+
+        }
+
+    } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return books;
     }
-}
+    }

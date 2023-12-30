@@ -4,6 +4,8 @@ public class Book {
     private String author;
     private double price;
 
+
+
     public int getBookId() {
         return bookId;
     }
@@ -36,7 +38,7 @@ public class Book {
         this.price = price;
     }
 
-    public Book(int bookId, String title, String author, double price) {
+    public Book(String title, String author, double price) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
